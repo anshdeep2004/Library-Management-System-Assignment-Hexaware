@@ -2,9 +2,14 @@ package com.library;
 
 import com.library.config.LibraryConfig;
 import com.library.controller.BookController;
+import com.library.controller.EventController;
+import com.library.controller.MemberController;
+import com.library.dto.EventRegistrationDto;
 import com.library.enums.BookStatus;
 import com.library.enums.Genre;
 import com.library.model.Book;
+import com.library.model.EventRegistration;
+import com.library.model.Member;
 import com.library.service.BookService;
 import jakarta.persistence.GeneratedValue;
 
@@ -17,6 +22,8 @@ public class LibraryManagementApp {
     public static void main(String [] args) {
         Scanner sc = new Scanner(System.in);
         BookController bookController = new BookController();
+        EventController eventController = new EventController();
+        MemberController memberController = new MemberController();
 
         while(true) {
             System.out.println("---------Welcome to the Library----------");
@@ -28,6 +35,9 @@ public class LibraryManagementApp {
             System.out.println("6. Get books of an author.");
             System.out.println("7. Get books borrowed by a member.");
             System.out.println("8. Get books by Genre / BookStatus.");
+            System.out.println("9. Get all registrations for an event ID.(Without DTO)");
+            System.out.println("10. Get all members who registered on an event but did not come.");
+            System.out.println("11. Get all registrations for an event ID.(With DTO)");
             System.out.println("0. To Exit.");
             System.out.println("-----------------------------------------");
             System.out.print("Enter your choice: ");
@@ -196,6 +206,78 @@ public class LibraryManagementApp {
                     }
                     else {
                         filteredList.forEach(System.out :: println);
+                    }
+                }
+
+                /*
+                Task 6:
+                  Write a method findRegistrationsForEvent(Long eventId) that returns all
+                  EventRegistration rows for a given event
+                 */
+                case 9 -> {
+                    System.out.println("--------Get Registration by Event ID (Without DTO)--------");
+                    System.out.print("Enter the event ID: ");
+                    long eventId = sc.nextLong();
+                    try {
+                        List<EventRegistration> eventRegistrations = eventController.findRegistrationsForEvent(eventId);
+                        if(eventRegistrations.isEmpty()) {
+                            System.out.println("No registrations found for the event ID=" + eventId);
+                        }
+                        else {
+                            eventRegistrations.forEach(System.out :: println);
+                        }
+                    }
+                    catch (RuntimeException e) {
+                        System.out.println("Operation failed: " + e.getMessage());
+                    }
+                }
+
+                /*
+                Task 7:
+                    Write a method findNoShowsForEvent(Long eventId) that returns all Members who
+                    registered for a given event but did not attend — filtering directly on
+                    EventRegistration.attendanceStatus.
+                 */
+                case 10 -> {
+                    System.out.println("--------Members who did not show for the Event--------");
+                    System.out.print("Enter event ID: ");
+                    long eventId = sc.nextInt();
+                    sc.nextLine();
+                    try {
+                        List<Member> notShowMembers = memberController.findNoShowsForEvent(eventId);
+                        if(notShowMembers.isEmpty()) {
+                            System.out.println("There is not member who did not show for the event ID=" + eventId);
+                        }
+                        else {
+                            notShowMembers.forEach(System.out :: println);
+                        }
+                    }
+                    catch (RuntimeException e) {
+                        System.out.println("Operation failed: " + e.getMessage());
+                    }
+                }
+
+                /*
+                Task 8:
+                    Create an EventRegistrationDTO and an EventRegistrationMapper class to convert
+                    EventRegistration entities to DTOs, and update the service-facing method to return
+                    List<EventRegistrationDTO> instead of List<EventRegistration>.
+                 */
+                case 11 -> {
+                    System.out.println("--------Get Registration by Event ID (With DTO)--------");
+                    System.out.print("Enter the event ID: ");
+                    long eventId = sc.nextLong();
+                    try {
+                        List<EventRegistrationDto> eventRegistrationsDto = eventController.findRegistrationsForEventWithDto(eventId);
+                        if(eventRegistrationsDto.isEmpty()) {
+                            System.out.println("No registrations found for the event ID=" + eventId);
+                        }
+                        else {
+                            eventRegistrationsDto.forEach(System.out :: println);
+                        }
+                    }
+                    catch (RuntimeException e) {
+                        System.out.println("Operation failed: " + e.getMessage());
                     }
                 }
             }

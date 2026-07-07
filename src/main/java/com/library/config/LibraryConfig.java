@@ -1,8 +1,6 @@
 package com.library.config;
 
-import com.library.model.Author;
-import com.library.model.Book;
-import com.library.model.Member;
+import com.library.model.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -28,6 +26,8 @@ public class LibraryConfig {
                 config.addAnnotatedClass(Book.class);
                 config.addAnnotatedClass(Author.class);
                 config.addAnnotatedClass(Member.class);
+                config.addAnnotatedClass(LibraryEvent.class);
+                config.addAnnotatedClass(EventRegistration.class);
 
                 StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                         .applySettings(config.getProperties())
